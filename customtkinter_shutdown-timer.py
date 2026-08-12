@@ -1,9 +1,21 @@
 import os
 import customtkinter
+from datetime import datetime
+from tkinter import PhotoImage
+
+
 
 root=customtkinter.CTk()
 root.title("ShutDownTimer")
-root.iconbitmap("image_2024-12-20_001846172.ico")
+# Prefer iconphoto with a PhotoImage (supports PNG); fall back to iconbitmap for .ico
+try:
+    icon = PhotoImage(file="image_2024-12-20_001846172.ico")
+    root.iconphoto(False, icon)
+except Exception:
+    try:
+        root.iconbitmap("image_2024-12-20_001846172.ico")
+    except Exception:
+        pass
 root.resizable(False,False)
 root.geometry("550x160")
 customtkinter.set_appearance_mode("system")
@@ -22,6 +34,11 @@ entry_var4=customtkinter.StringVar(root)
 # Globale Variable fÃ¼r den Countdown-Wert
 countdown_time = 0
 
+def create_file():
+    global f
+    f = open("log.txt","a+")
+    
+
 def countdown():
     global countdown_time, is_canceled
     if countdown_time > 0 and not is_canceled:
@@ -33,7 +50,7 @@ def countdown():
         os.system(f"shutdown -s -t 0")  # Hier wird der Shutdown-Befehl ausgefÃ¼hrt
 
 def button_confirm():
-    global countdown_time, is_canceled
+    global countdown_time, is_canceled, entry_var1, entry_var2, entry_var3, entry_var4
     try:
         hour = int(entry_var1.get())
         minute = int(entry_var2.get())
@@ -58,6 +75,7 @@ def button_confirm():
 
     except ValueError:
         entry_var4.set("Invalid input")
+    
 
 
 def button_confirm2(event):
@@ -67,13 +85,16 @@ def button_confirm2(event):
 
     except ValueError:
         entry_var4.set("Invalid input")
+        
 
 
 def button_cancel():
     global is_canceled
     is_canceled = True  # Countdown stoppen
     entry_var4.set("Canceled!")
+    
 
+    
 
 def button_cancel2(event):
     global is_canceled
@@ -81,6 +102,7 @@ def button_cancel2(event):
         button_cancel()
     except ValueError:
         entry_var4.set("canceled!")
+
 
 
 def optionmenu1_callback(choice):
@@ -106,6 +128,14 @@ def optionmenu2_callback(choice):
 def slider_event(value):
     global entry_var3
     entry_var3.set(int(value))
+
+
+
+
+    
+
+
+
     
 
 
@@ -175,9 +205,10 @@ cancel=customtkinter.CTkButton(root,text='cancel',command=button_cancel,
                                  border_width=3,
                                  border_color="#000000")
 
+
+
 root.bind("<Escape>", button_cancel2)
 root.bind("<Return>",button_confirm2)
-
 
 
 label0.grid(row=0,column=2)
@@ -192,4 +223,8 @@ optionmenu2.grid(row=3,column=2, pady=5)
 slider.grid(row=3, column=3, pady=5)
 confirm.grid(row=4,column=1)
 cancel.grid(row=4,column=2)
+
+
+
 root.mainloop()
+create_file()
